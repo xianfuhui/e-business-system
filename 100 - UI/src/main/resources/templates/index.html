@@ -203,6 +203,96 @@
         </div>
       </div>
 
+      <!-- Section Divider -->
+      <div class="panel">
+        <div class="panel__header">
+          <div class="panel__title">
+            <svg class="panel__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+              stroke-linecap="round" stroke-linejoin="round">
+              <circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/>
+              <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/>
+            </svg>
+            E-commerce Analytics
+            <span class="eco-label">Dashboard</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- KPI Overview -->
+      <div class="panel">
+        <div class="panel__header">
+          <div class="panel__title">
+            <svg class="panel__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+              stroke-linecap="round" stroke-linejoin="round">
+              <rect x="2" y="3" width="20" height="14" rx="2"/>
+              <path d="M8 21h8M12 17v4"/>
+            </svg>
+            Overview
+          </div>
+        </div>
+        <div class="panel__body">
+          <div class="metric-grid metric-grid--4">
+            <div class="metric-card">
+              <div class="metric-card__label">Total Rows</div>
+              <div class="metric-card__value metric-card__value--accent" id="rowsCount">—</div>
+            </div>
+            <div class="metric-card">
+              <div class="metric-card__label">Sessions</div>
+              <div class="metric-card__value" id="sessionsCount">—</div>
+            </div>
+            <div class="metric-card">
+              <div class="metric-card__label">Users</div>
+              <div class="metric-card__value metric-card__value--teal" id="usersCount">—</div>
+            </div>
+            <div class="metric-card">
+              <div class="metric-card__label">Purchase Sessions</div>
+              <div class="metric-card__value metric-card__value--green" id="purchaseSessionsCount">—</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Customer Journey Metrics -->
+      <div class="panel">
+        <div class="panel__header">
+          <div class="panel__title">
+            <svg class="panel__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+              stroke-linecap="round" stroke-linejoin="round">
+              <polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/>
+            </svg>
+            Customer Journey Metrics
+          </div>
+        </div>
+        <div class="panel__body">
+          <div class="metric-grid metric-grid--6">
+            <div class="metric-card">
+              <div class="metric-card__label">Purchase Rate</div>
+              <div class="metric-card__value metric-card__value--green" id="purchaseRateMetric">—</div>
+            </div>
+            <div class="metric-card">
+              <div class="metric-card__label">Abandonment Rate</div>
+              <div class="metric-card__value metric-card__value--danger" id="abandonRateMetric">—</div>
+            </div>
+            <div class="metric-card">
+              <div class="metric-card__label">Window Shopper</div>
+              <div class="metric-card__value metric-card__value--warn" id="windowRateMetric">—</div>
+            </div>
+            <div class="metric-card">
+              <div class="metric-card__label">Remove Cart → Purchase</div>
+              <div class="metric-card__value metric-card__value--teal" id="removePurchaseMetric">—</div>
+            </div>
+            <div class="metric-card">
+              <div class="metric-card__label">Returning Rate</div>
+              <div class="metric-card__value metric-card__value--accent" id="returningMetric">—</div>
+            </div>
+            <div class="metric-card">
+              <div class="metric-card__label">Loyal Rate</div>
+              <div class="metric-card__value" id="loyalMetric">—</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
       <!-- Network Graph + Prediction -->
       <div class="two-col">
         <div class="panel" style="overflow:visible;">
@@ -303,6 +393,37 @@
         </div>
       </div>
 
+      <!-- Process Insights -->
+      <div class="panel">
+        <div class="panel__header">
+          <div class="panel__title">
+            <svg class="panel__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+              stroke-linecap="round" stroke-linejoin="round">
+              <circle cx="12" cy="12" r="10" />
+              <line x1="12" y1="8" x2="12" y2="12" />
+              <line x1="12" y1="16" x2="12.01" y2="16" />
+            </svg>
+            Process Insights
+          </div>
+        </div>
+        <div class="panel__body">
+          <div class="insights-grid">
+            <div>
+              <div class="t-label" style="margin-bottom:8px;">Important Steps</div>
+              <ul id="importantSteps" class="insights-list"></ul>
+            </div>
+            <div>
+              <div class="t-label" style="margin-bottom:8px;">Bottlenecks</div>
+              <ul id="bottlenecks" class="insights-list"></ul>
+            </div>
+            <div>
+              <div class="t-label" style="margin-bottom:8px;">Top Paths</div>
+              <ul id="topPaths" class="insights-list"></ul>
+            </div>
+          </div>
+        </div>
+      </div>
+
       <!-- ===================================================== -->
       <!-- E-COMMERCE ANALYTICS DASHBOARD -->
       <!-- ===================================================== -->
@@ -310,96 +431,6 @@
       <!-- ═══════════════════════════════════════════════════════════
          E-COMMERCE ANALYTICS DASHBOARD
       ═══════════════════════════════════════════════════════════ -->
-
-      <!-- Section Divider -->
-      <div class="panel">
-        <div class="panel__header">
-          <div class="panel__title">
-            <svg class="panel__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
-              stroke-linecap="round" stroke-linejoin="round">
-              <circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/>
-              <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/>
-            </svg>
-            E-commerce Analytics
-            <span class="eco-label">Dashboard</span>
-          </div>
-        </div>
-      </div>
-
-      <!-- KPI Overview -->
-      <div class="panel">
-        <div class="panel__header">
-          <div class="panel__title">
-            <svg class="panel__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
-              stroke-linecap="round" stroke-linejoin="round">
-              <rect x="2" y="3" width="20" height="14" rx="2"/>
-              <path d="M8 21h8M12 17v4"/>
-            </svg>
-            Overview
-          </div>
-        </div>
-        <div class="panel__body">
-          <div class="metric-grid metric-grid--4">
-            <div class="metric-card">
-              <div class="metric-card__label">Total Rows</div>
-              <div class="metric-card__value metric-card__value--accent" id="rowsCount">—</div>
-            </div>
-            <div class="metric-card">
-              <div class="metric-card__label">Sessions</div>
-              <div class="metric-card__value" id="sessionsCount">—</div>
-            </div>
-            <div class="metric-card">
-              <div class="metric-card__label">Users</div>
-              <div class="metric-card__value metric-card__value--teal" id="usersCount">—</div>
-            </div>
-            <div class="metric-card">
-              <div class="metric-card__label">Purchase Sessions</div>
-              <div class="metric-card__value metric-card__value--green" id="purchaseSessionsCount">—</div>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <!-- Customer Journey Metrics -->
-      <div class="panel">
-        <div class="panel__header">
-          <div class="panel__title">
-            <svg class="panel__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
-              stroke-linecap="round" stroke-linejoin="round">
-              <polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/>
-            </svg>
-            Customer Journey Metrics
-          </div>
-        </div>
-        <div class="panel__body">
-          <div class="metric-grid metric-grid--6">
-            <div class="metric-card">
-              <div class="metric-card__label">Purchase Rate</div>
-              <div class="metric-card__value metric-card__value--green" id="purchaseRateMetric">—</div>
-            </div>
-            <div class="metric-card">
-              <div class="metric-card__label">Abandonment Rate</div>
-              <div class="metric-card__value metric-card__value--danger" id="abandonRateMetric">—</div>
-            </div>
-            <div class="metric-card">
-              <div class="metric-card__label">Window Shopper</div>
-              <div class="metric-card__value metric-card__value--warn" id="windowRateMetric">—</div>
-            </div>
-            <div class="metric-card">
-              <div class="metric-card__label">Remove Cart → Purchase</div>
-              <div class="metric-card__value metric-card__value--teal" id="removePurchaseMetric">—</div>
-            </div>
-            <div class="metric-card">
-              <div class="metric-card__label">Returning Rate</div>
-              <div class="metric-card__value metric-card__value--accent" id="returningMetric">—</div>
-            </div>
-            <div class="metric-card">
-              <div class="metric-card__label">Loyal Rate</div>
-              <div class="metric-card__value" id="loyalMetric">—</div>
-            </div>
-          </div>
-        </div>
-      </div>
 
       <!-- Traffic Analysis -->
       <div class="panel">
@@ -530,37 +561,6 @@
             <div class="chart-panel">
               <div class="chart-panel__header">Purchase Distribution by Hour &amp; Price</div>
               <div class="chart-panel__body"><img id="purchaseHourPrice" alt="Purchase Distribution by Hour &amp; Price" /></div>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <!-- Process Insights -->
-      <div class="panel">
-        <div class="panel__header">
-          <div class="panel__title">
-            <svg class="panel__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
-              stroke-linecap="round" stroke-linejoin="round">
-              <circle cx="12" cy="12" r="10" />
-              <line x1="12" y1="8" x2="12" y2="12" />
-              <line x1="12" y1="16" x2="12.01" y2="16" />
-            </svg>
-            Process Insights
-          </div>
-        </div>
-        <div class="panel__body">
-          <div class="insights-grid">
-            <div>
-              <div class="t-label" style="margin-bottom:8px;">Important Steps</div>
-              <ul id="importantSteps" class="insights-list"></ul>
-            </div>
-            <div>
-              <div class="t-label" style="margin-bottom:8px;">Bottlenecks</div>
-              <ul id="bottlenecks" class="insights-list"></ul>
-            </div>
-            <div>
-              <div class="t-label" style="margin-bottom:8px;">Top Paths</div>
-              <ul id="topPaths" class="insights-list"></ul>
             </div>
           </div>
         </div>
