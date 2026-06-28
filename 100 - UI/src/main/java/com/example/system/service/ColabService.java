@@ -15,7 +15,7 @@ public class ColabService {
 
     public String callColab(MultipartFile file) throws Exception {
 
-        String url = "https://unobtained-nontransportable-theressa.ngrok-free.dev/process"; 
+        String url = "https://amiss-flame-doorstep.ngrok-free.dev/process"; 
 
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.MULTIPART_FORM_DATA);
@@ -42,7 +42,7 @@ public class ColabService {
 
     public String getLLMInsight() throws Exception {
 
-        String url = "https://unobtained-nontransportable-theressa.ngrok-free.dev/llm";
+        String url = "https://amiss-flame-doorstep.ngrok-free.dev/llm";
 
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
@@ -59,7 +59,7 @@ public class ColabService {
 
     public String chatWithColab(String message) throws Exception {
 
-        String url = "https://unobtained-nontransportable-theressa.ngrok-free.dev/chat";
+        String url = "https://amiss-flame-doorstep.ngrok-free.dev/chat";
 
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
@@ -80,7 +80,7 @@ public class ColabService {
 
     public String predictNext(java.util.List<String> sequence) throws Exception {
 
-        String url = "https://unobtained-nontransportable-theressa.ngrok-free.dev/predict_next";
+        String url = "https://amiss-flame-doorstep.ngrok-free.dev/predict_next";
 
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
