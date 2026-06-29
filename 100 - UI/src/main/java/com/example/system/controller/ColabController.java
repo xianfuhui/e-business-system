@@ -21,11 +21,17 @@ public class ColabController {
     // API gọi từ JS
     @PostMapping("/api/run")
     @ResponseBody
-    public String run(@RequestParam("file") MultipartFile file) {
+    public String run(
+            @RequestParam("file")
+            MultipartFile file
+    ) {
         try {
-            return colabService.callColab(file);
+            return colabService
+                    .uploadToPython(file);
         } catch (Exception e) {
-            return "{\"error\":\"" + e.getMessage() + "\"}";
+            return "{\"error\":\""
+                    + e.getMessage()
+                    + "\"}";
         }
     }
 

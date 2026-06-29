@@ -1,48 +1,24 @@
 package com.example.system.service;
 
+import java.io.File;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.springframework.core.io.ByteArrayResource;
 import org.springframework.http.*;
 import org.springframework.stereotype.Service;
-import org.springframework.util.*;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.multipart.MultipartFile;
 
+import org.springframework.beans.factory.annotation.Value;
+
 @Service
 public class ColabService {
-
-    public String callColab(MultipartFile file) throws Exception {
-
-        String url = "https://amiss-flame-doorstep.ngrok-free.dev/process"; 
-
-        HttpHeaders headers = new HttpHeaders();
-        headers.setContentType(MediaType.MULTIPART_FORM_DATA);
-
-        MultiValueMap<String, Object> body = new LinkedMultiValueMap<>();
-
-        body.add("file", new ByteArrayResource(file.getBytes()) {
-            @Override
-            public String getFilename() {
-                return file.getOriginalFilename();
-            }
-        });
-
-        HttpEntity<MultiValueMap<String, Object>> request =
-                new HttpEntity<>(body, headers);
-
-        RestTemplate restTemplate = new RestTemplate();
-
-        ResponseEntity<String> response =
-                restTemplate.postForEntity(url, request, String.class);
-
-        return response.getBody();
-    }
+    @Value("${python.api.base-url}")
+    private String baseUrl;
 
     public String getLLMInsight() throws Exception {
 
-        String url = "https://amiss-flame-doorstep.ngrok-free.dev/llm";
+        String url = baseUrl + "/llm";
 
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
@@ -59,7 +35,7 @@ public class ColabService {
 
     public String chatWithColab(String message) throws Exception {
 
-        String url = "https://amiss-flame-doorstep.ngrok-free.dev/chat";
+        String url = baseUrl + "/chat";
 
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
@@ -80,7 +56,7 @@ public class ColabService {
 
     public String predictNext(java.util.List<String> sequence) throws Exception {
 
-        String url = "https://amiss-flame-doorstep.ngrok-free.dev/predict_next";
+        String url = baseUrl + "/predict_next";
 
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
@@ -95,6 +71,54 @@ public class ColabService {
 
         ResponseEntity<String> response =
                 restTemplate.postForEntity(url, request, String.class);
+
+        return response.getBody();
+    }
+
+    public String uploadToPython(
+        MultipartFile file
+    ) throws Exception {
+
+        String folder = "C:\\Users\\tphuy\\OneDrive\\Documents\\dataset\\";
+
+        File dest = new File(
+                folder +
+                file.getOriginalFilename()
+        );
+
+        file.transferTo(dest);
+
+        String url =
+                "http://localhost:5000/process";
+
+        HttpHeaders headers =
+                new HttpHeaders();
+
+        headers.setContentType(
+                MediaType.APPLICATION_JSON
+        );
+
+        Map<String, String> body =
+                new HashMap<>();
+
+        body.put(
+                "filename",
+                file.getOriginalFilename()
+        );
+
+        HttpEntity<Map<String, String>>
+                request =
+                new HttpEntity<>(body, headers);
+
+        RestTemplate restTemplate =
+                new RestTemplate();
+
+        ResponseEntity<String> response =
+                restTemplate.postForEntity(
+                        url,
+                        request,
+                        String.class
+                );
 
         return response.getBody();
     }
