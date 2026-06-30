@@ -1,0 +1,1 @@
+pip install flask pyngrok pandas networkx matplotlib pm4py google-genai tensorflow scikit-learn seaborn pydot graphviz polars pyarrow psutil

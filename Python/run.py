@@ -60,8 +60,10 @@ NEEDED_COLUMNS = [
 ]
 
 # API key must come from environment, never hardcoded
-GEMINI_API_KEY = os.environ.get("GEMINI_API_KEY")
+GEMINI_API_KEY = "AIzaSyD0ZHsh3xKrdpxLGW6O_cO4YofHk2CJzFQ"
 client = genai.Client(api_key=GEMINI_API_KEY) if GEMINI_API_KEY else None
+# GEMINI_API_KEY = os.environ.get("GEMINI_API_KEY")
+# client = genai.Client(api_key=GEMINI_API_KEY) if GEMINI_API_KEY else None
 
 
 def sanitize_for_json(obj):
