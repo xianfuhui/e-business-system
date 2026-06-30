@@ -1012,10 +1012,6 @@
 
       const container = document.getElementById('network');
 
-      // NOTE: vis-network has no top-level "background" option (that's why the
-      // console warned "Unknown option detected: background... matching option
-      // found at edges.background"). Set the container's CSS background instead
-      // (see /css/style.css: #network { background: transparent; }).
       network = new vis.Network(container, { nodes, edges }, {
         edges: { arrows: 'to', color: { color: '#CBD5E1', highlight: '#4F46E5' }, smooth: { type: 'curvedCW', roundness: 0.2 } },
         nodes: {
@@ -1032,7 +1028,8 @@
             gravitationalConstant: -2000,
             springLength: 120
           }
-        }
+        },
+        background: { color: 'transparent' },
       });
 
       network.on('click', async (params) => {
@@ -1049,21 +1046,8 @@
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ sequence: currentPath })
           });
-
-          // Read as text first so a non-JSON / truncated response (e.g. the
-          // backend still busy, a proxy timing out, or a 500 HTML error page)
-          // doesn't blow up with a confusing "Expected ',' or '}'" parse error.
-          const raw = await res.text();
-          let data;
-          try {
-            data = JSON.parse(raw);
-          } catch (parseErr) {
-            console.error('Predict response was not valid JSON:', raw);
-            document.getElementById('suggestBox').innerHTML =
-              `<span style="color:var(--danger,#e74c3c);font-size:0.8125rem;">Server returned an invalid response (status ${res.status}). Check that /api/run finished training successfully.</span>`;
-            return;
-          }
-
+          const data = await res.json();
+          console.log('predict response:', data);   // <-- xem trực tiếp trong Console
           showSuggestions(data.suggestions || [], data.error);
         } catch (err) {
           console.error('Prediction error:', err);

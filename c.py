@@ -708,7 +708,6 @@ def home():
 @app.route("/api/run", methods=["POST"])
 def api_run():
     global model, le, MAX_LEN
-    path = None
     try:
         if "file" not in request.files:
             return jsonify({"error": "No file part in request"}), 400
@@ -738,7 +737,7 @@ def api_run():
     finally:
         # Don't keep uploaded CSVs lying around — they can be multi-GB
         try:
-            if path and os.path.exists(path):
+            if "path" in dir() and os.path.exists(path):
                 os.remove(path)
         except Exception:
             pass
@@ -813,7 +812,7 @@ def api_predict():
     sequence = data.get("sequence", [])
 
     if model is None or le is None:
-        return jsonify({"suggestions": [], "error": "Model not trained yet - run /api/run first"}), 200
+        return jsonify({"suggestions": [], "error": "Model not trained yet — run /api/run first"}), 200
 
     if not sequence:
         return jsonify({"suggestions": []})
@@ -826,7 +825,7 @@ def api_predict():
     if not filtered_sequence:
         return jsonify({
             "suggestions": [],
-            "error": "None of the clicked activities were seen during training. Known activities: " + ", ".join(sorted(known_classes))
+            "error": f"None of the clicked activities were seen during training. Known activities: {sorted(known_classes)}"
         })
 
     try:

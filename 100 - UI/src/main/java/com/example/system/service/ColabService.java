@@ -18,7 +18,7 @@ public class ColabService {
 
     public String getLLMInsight() throws Exception {
 
-        String url = baseUrl + "/llm";
+        String url = baseUrl + "/api/llm";
 
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
@@ -35,7 +35,7 @@ public class ColabService {
 
     public String chatWithColab(String message) throws Exception {
 
-        String url = baseUrl + "/chat";
+        String url = baseUrl + "/api/chat";
 
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
@@ -56,7 +56,7 @@ public class ColabService {
 
     public String predictNext(java.util.List<String> sequence) throws Exception {
 
-        String url = baseUrl + "/predict_next";
+        String url = baseUrl + "/api/predict";
 
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
