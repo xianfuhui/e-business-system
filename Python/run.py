@@ -53,6 +53,10 @@ os.makedirs(UPLOAD_DIR, exist_ok=True)
 ALLOWED_EXTENSIONS = {"csv"}
 MAX_UPLOAD_BYTES = 6 * 1024 * 1024 * 1024  # 6GB headroom; update the "Max 10 MB" hint text in the HTML too
 
+# Reproducibility: single seed used everywhere sampling/shuffling happens
+# (session sampling, betweenness centrality approximation, TF shuffling/init).
+RANDOM_SEED = 42
+
 # Only needed columns are read from the CSV — change this if your schema differs
 NEEDED_COLUMNS = [
     "event_time", "event_type", "product_id", "category_code",
@@ -158,9 +162,15 @@ def sample_sessions(lf: pl.LazyFrame, max_rows: int) -> pl.DataFrame:
     Sample by whole sessions (not raw rows) so process/sequence mining
     still sees coherent case histories, rather than cutting sessions in half.
     Uses streaming collect so Polars processes the 5GB file in chunks.
+
+    Session IDs are sorted before sampling so the input to .sample(seed=...)
+    has a stable, reproducible order regardless of how Polars' streaming
+    engine internally chunks/parallelizes the unique() collection — without
+    this, the same seed could still pick a different set of sessions on a
+    different run.
     """
     session_ids = (
-        lf.select(CASE_COL).unique().collect(streaming=True)[CASE_COL]
+        lf.select(CASE_COL).unique().collect(streaming=True)[CASE_COL].sort()
     )
 
     if len(session_ids) == 0:
@@ -173,7 +183,7 @@ def sample_sessions(lf: pl.LazyFrame, max_rows: int) -> pl.DataFrame:
 
     frac = max_rows / total_rows
     n_sessions = max(1, int(len(session_ids) * frac))
-    chosen = session_ids.sample(n=min(n_sessions, len(session_ids)), seed=42)
+    chosen = session_ids.sample(n=min(n_sessions, len(session_ids)), seed=RANDOM_SEED)
 
     sampled = (
         lf.filter(pl.col(CASE_COL).is_in(chosen))
@@ -188,7 +198,7 @@ def sample_sessions(lf: pl.LazyFrame, max_rows: int) -> pl.DataFrame:
 # ============================================================
 def fit_label_encoder_streaming(lf: pl.LazyFrame) -> LabelEncoder:
     activities = (
-        lf.select(ACTIVITY_COL).unique().collect(streaming=True)[ACTIVITY_COL].to_list()
+        lf.select(ACTIVITY_COL).unique().collect(streaming=True)[ACTIVITY_COL].sort().to_list()
     )
     le = LabelEncoder()
     le.fit(activities)
@@ -233,6 +243,11 @@ def build_model(vocab_size, max_len):
 
 
 def train_transformer_streaming(lf: pl.LazyFrame, le: LabelEncoder, max_len: int = 20):
+    # Seed Python/NumPy/TensorFlow RNGs so weight initialization, dataset
+    # shuffling, and any other randomness in this training run are
+    # reproducible across runs with the same data.
+    tf.keras.utils.set_random_seed(RANDOM_SEED)
+
     sampled = sample_sessions(lf, MAX_SESSIONS_FOR_TRAINING)
     vocab_size = len(le.classes_) + 1  # +1 for the reserved padding index (0)
 
@@ -244,7 +259,7 @@ def train_transformer_streaming(lf: pl.LazyFrame, le: LabelEncoder, max_len: int
     ds = tf.data.Dataset.from_generator(
         lambda: sequence_generator(sampled, le, max_len),
         output_signature=output_signature,
-    ).shuffle(2048).batch(TRAINING_BATCH_SIZE).prefetch(tf.data.AUTOTUNE)
+    ).shuffle(2048, seed=RANDOM_SEED).batch(TRAINING_BATCH_SIZE).prefetch(tf.data.AUTOTUNE)
 
     model = build_model(vocab_size, max_len)
     print("Training transformer (streamed)...")
@@ -296,7 +311,11 @@ def build_graph_mining(df: pd.DataFrame):
     deg_img = fig_to_base64(fig2)
     plt.close(fig2)
 
-    bc = nx.betweenness_centrality(G, k=min(500, G.number_of_nodes()))  # approximate BC for speed
+    # seed=RANDOM_SEED: when G has >500 nodes, betweenness_centrality falls
+    # back to an approximation that samples k random nodes internally. Without
+    # a fixed seed that sample (and therefore the "bottlenecks" chart/ranking)
+    # changes on every run even for the exact same input graph.
+    bc = nx.betweenness_centrality(G, k=min(500, G.number_of_nodes()), seed=RANDOM_SEED)
     sorted_bc = sorted(bc.items(), key=lambda x: x[1], reverse=True)[:10]
 
     fig3 = plt.figure(figsize=(12, 6))
