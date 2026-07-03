@@ -43,7 +43,7 @@ ACTIVITY_COL = "event_type"
 TIME_COL = "event_time"
 
 # Hard caps so a 5GB file doesn't blow up RAM / pm4py / matplotlib
-MAX_ROWS_FOR_PROCESS_MINING = 300_000   # rows sampled (by full sessions) for alpha/inductive miner + graph viz
+MAX_ROWS_FOR_PROCESS_MINING = 1_100_000   # rows sampled (by full sessions) for alpha/inductive miner + graph viz
 MAX_SESSIONS_FOR_TRAINING = 200_000     # sessions used to build transformer training sequences
 TRAINING_BATCH_SIZE = 256
 TRAINING_EPOCHS = 3
@@ -64,7 +64,7 @@ NEEDED_COLUMNS = [
 ]
 
 # API key must come from environment, never hardcoded
-GEMINI_API_KEY = "AIzaSyD0ZHsh3xKrdpxLGW6O_cO4YofHk2CJzFQ"
+GEMINI_API_KEY = "AQ.Ab8RN6KEdC8HWJ-c60MpwIuaW2idGIRIjT58YpwVAQg-KuvPA"
 client = genai.Client(api_key=GEMINI_API_KEY) if GEMINI_API_KEY else None
 # GEMINI_API_KEY = os.environ.get("GEMINI_API_KEY")
 # client = genai.Client(api_key=GEMINI_API_KEY) if GEMINI_API_KEY else None
