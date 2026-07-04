@@ -1,1 +1,29 @@
-pip install flask pyngrok pandas networkx matplotlib pm4py google-genai tensorflow scikit-learn seaborn pydot graphviz polars pyarrow psutil
+# Danh sách thư viện Python cần cài cho Python/run.py
+# Cài bằng lệnh:  pip install -r install.txt
+#
+# Ghi chú:
+# - pm4py cần Graphviz cài ở HỆ ĐIỀU HÀNH (không chỉ pip) để vẽ Petri Net / BPMN.
+#   Tải tại: https://graphviz.org/download/  (nhớ thêm vào PATH)
+# - Nếu máy không có GPU hoặc cài tensorflow lỗi, thay dòng "tensorflow"
+#   bằng "tensorflow-cpu".
+
+flask==3.0.3
+flask-cors==4.0.1
+werkzeug==3.0.3
+
+polars==1.9.0
+pandas==2.2.2
+numpy==1.26.4
+
+networkx==3.3
+pydot==3.0.1
+
+matplotlib==3.9.0
+seaborn==0.13.2
+
+pm4py==2.7.11
+
+scikit-learn==1.5.1
+tensorflow==2.16.1
+
+google-genai==0.3.0

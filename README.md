@@ -1,5 +1,5 @@
 ====================================================================
- HƯỚNG DẪN CHẠY DỰ ÁN: PROCESS MINING SYSTEM (Spring Boot + Python)
+HƯỚNG DẪN CHẠY DỰ ÁN: PROCESS MINING SYSTEM (Spring Boot + Python)
 ====================================================================
 Repo tham khảo: https://github.com/xianfuhui/e-business-system
 
