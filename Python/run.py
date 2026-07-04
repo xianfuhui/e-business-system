@@ -64,7 +64,7 @@ NEEDED_COLUMNS = [
 ]
 
 # API key must come from environment, never hardcoded
-GEMINI_API_KEY = "AQ.Ab8RN6KEdC8HWJ-c60MpwIuaW2idGIRIjT58YpwVAQg-KuvPA"
+GEMINI_API_KEY = ""
 client = genai.Client(api_key=GEMINI_API_KEY) if GEMINI_API_KEY else None
 # GEMINI_API_KEY = os.environ.get("GEMINI_API_KEY")
 # client = genai.Client(api_key=GEMINI_API_KEY) if GEMINI_API_KEY else None
