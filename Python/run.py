@@ -279,10 +279,32 @@ def wrap_text(text, width=15):
     return "\n".join(textwrap.wrap(str(text), width))
 
 
+def collapse_repeats(seq):
+    """
+    Loại bỏ các activity lặp liên tiếp trong cùng session, ví dụ:
+    [view, view, view, cart] -> [view, cart]
+
+    FIX: nếu không gộp bước này trước khi build đồ thị / đếm path, phần lớn
+    dữ liệu chỉ là nhiều lần "view" liên tiếp -> đồ thị suy biến còn rất ít
+    cạnh thực sự (khiến degree centrality bị thổi phồng, xem hàm
+    build_graph_mining) và "Top Paths" chỉ toàn "view -> view -> view...".
+    """
+    if not seq:
+        return seq
+    out = [seq[0]]
+    for a in seq[1:]:
+        if a != out[-1]:
+            out.append(a)
+    return out
+
+
 def build_graph_mining(df: pd.DataFrame):
     G = nx.DiGraph()
     for _, group in df.groupby(CASE_COL):
-        acts = group.sort_values(TIME_COL)[ACTIVITY_COL].tolist()
+        # FIX: gộp activity lặp liên tiếp trước khi build cạnh, để đồ thị
+        # phản ánh đúng các bước chuyển tiếp thật sự (view->cart->purchase...)
+        # thay vì bị self-loop view->view chiếm gần hết trọng số.
+        acts = collapse_repeats(group.sort_values(TIME_COL)[ACTIVITY_COL].tolist())
         for i in range(len(acts) - 1):
             u, v = acts[i], acts[i + 1]
             if G.has_edge(u, v):
@@ -299,8 +321,14 @@ def build_graph_mining(df: pd.DataFrame):
     graph_img = fig_to_base64(fig1)
     plt.close(fig1)
 
-    deg = nx.degree_centrality(G)
-    sorted_deg = sorted(deg.items(), key=lambda x: x[1], reverse=True)[:10]
+    # FIX: "Important Steps" trước đây dùng degree_centrality trên một đồ thị
+    # chỉ có vài node (3-4 loại event) -> giá trị dễ vượt quá 100% (vd 300%),
+    # vì degree_centrality = (in+out)/(n-1) có thể > 1 khi n rất nhỏ.
+    # Thay bằng % tần suất xuất hiện của từng activity trên tổng số event,
+    # luôn nằm trong khoảng [0, 100]% và dễ hiểu hơn cho người dùng.
+    total_events = len(df)
+    freq = df[ACTIVITY_COL].value_counts()
+    sorted_deg = [(k, float(v) / total_events) for k, v in freq.items()][:10]
 
     fig2 = plt.figure(figsize=(12, 6))
     labels = [wrap_text(x[0]) for x in sorted_deg]
@@ -327,8 +355,11 @@ def build_graph_mining(df: pd.DataFrame):
     bc_img = fig_to_base64(fig3)
     plt.close(fig3)
 
+    # FIX: cũng gộp activity lặp liên tiếp khi đếm "Top Paths", nếu không hầu
+    # hết path chỉ là chuỗi "view" lặp nhiều lần, không phản ánh hành trình
+    # chuyển đổi thật sự giữa các loại event.
     paths = [
-        " -> ".join(group.sort_values(TIME_COL)[ACTIVITY_COL].tolist())
+        " -> ".join(collapse_repeats(group.sort_values(TIME_COL)[ACTIVITY_COL].tolist()))
         for _, group in df.groupby(CASE_COL)
     ]
     counter = Counter(paths)
@@ -532,7 +563,15 @@ def build_ecommerce_dashboard(df: pd.DataFrame):
     cart_sessions = df[df["event_type"] == "cart"].groupby("category_code")["user_session"].nunique()
     purchase_sessions_cat = purchase_df.groupby("category_code")["user_session"].nunique()
     abandon_df = pd.concat([cart_sessions.rename("cart_sessions"), purchase_sessions_cat.rename("purchase_sessions")], axis=1).fillna(0)
-    abandon_df["abandonment_rate"] = ((abandon_df["cart_sessions"] - abandon_df["purchase_sessions"]) / abandon_df["cart_sessions"] * 100).replace([np.inf, -np.inf], 0).fillna(0)
+
+    # FIX: công thức gốc có thể ra số ÂM khi purchase_sessions > cart_sessions
+    # cho một category (vì category_code được gán theo từng dòng event, nên
+    # cart và purchase của cùng session không nhất thiết cùng category_code).
+    # Một tỉ lệ "bỏ giỏ hàng" không thể âm về mặt ý nghĩa, nên phải clip về [0, 100].
+    raw_rate = ((abandon_df["cart_sessions"] - abandon_df["purchase_sessions"])
+                / abandon_df["cart_sessions"] * 100)
+    raw_rate = raw_rate.replace([np.inf, -np.inf], 0).fillna(0)
+    abandon_df["abandonment_rate"] = raw_rate.clip(lower=0, upper=100)
     abandonment_rate_avg = float(abandon_df["abandonment_rate"].mean())
 
     fig, ax = plt.subplots(figsize=(13, 6))
